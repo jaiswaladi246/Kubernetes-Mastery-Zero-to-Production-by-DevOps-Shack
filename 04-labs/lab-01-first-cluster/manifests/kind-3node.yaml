@@ -1,0 +1,25 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: devopsshack-lab
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 30080
+        hostPort: 30080
+      - containerPort: 80
+        hostPort: 80
+      - containerPort: 443
+        hostPort: 443
+  - role: worker
+    labels:
+      topology.kubernetes.io/zone: zone-a
+  - role: worker
+    labels:
+      topology.kubernetes.io/zone: zone-b

@@ -1,0 +1,7 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Service
+metadata: { name: web }
+spec:
+  selector: { app: web }
+  ports: [{ port: 80, targetPort: 5678 }]

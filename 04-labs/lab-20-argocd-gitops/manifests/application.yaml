@@ -1,0 +1,21 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/<your-user>/<your-repo>
+    targetRevision: main
+    path: 04-labs/lab-20-argocd-gitops/gitops-repo/guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: lab20
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

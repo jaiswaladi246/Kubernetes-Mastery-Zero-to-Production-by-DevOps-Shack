@@ -1,0 +1,12 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tiny
+  namespace: lab02
+spec:
+  containers:
+    - name: app
+      image: registry.k8s.io/pause:3.10
+      resources:
+        requests: { cpu: 10m, memory: 8Mi }

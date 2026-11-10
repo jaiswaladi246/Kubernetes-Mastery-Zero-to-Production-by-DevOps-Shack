@@ -1,0 +1,17 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: guestbook }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: guestbook } }
+  template:
+    metadata: { labels: { app: guestbook } }
+    spec:
+      containers:
+        - name: web
+          image: hashicorp/http-echo:1.0
+          args: ["-text=Deployed by Argo CD · Kubernetes Mastery by DevOps Shack", "-listen=:5678"]
+          ports: [{ containerPort: 5678 }]
+          resources:
+            requests: { cpu: 10m, memory: 16Mi }

@@ -1,0 +1,12 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Pod
+metadata: { name: hungry, namespace: lab09 }
+spec:
+  containers:
+    - name: c
+      image: python:3.12-alpine
+      command: ["python", "-c", "x=[]\nwhile True: x.append(' ' * 10_000_000)"]
+      resources:
+        requests: { memory: 64Mi }
+        limits: { memory: 128Mi }

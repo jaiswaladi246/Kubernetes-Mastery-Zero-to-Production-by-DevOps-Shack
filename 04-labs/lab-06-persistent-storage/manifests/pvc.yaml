@@ -1,0 +1,13 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Namespace
+metadata: { name: lab06 }
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: data, namespace: lab06 }
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: standard
+  resources:
+    requests: { storage: 1Gi }

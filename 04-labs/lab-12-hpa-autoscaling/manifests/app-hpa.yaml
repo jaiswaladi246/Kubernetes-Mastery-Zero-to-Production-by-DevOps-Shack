@@ -1,0 +1,44 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Namespace
+metadata: { name: lab12 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: cpu-app, namespace: lab12 }
+spec:
+  selector: { matchLabels: { app: cpu-app } }
+  template:
+    metadata: { labels: { app: cpu-app } }
+    spec:
+      containers:
+        - name: app
+          image: registry.k8s.io/hpa-example
+          ports: [{ containerPort: 80 }]
+          resources:
+            requests: { cpu: 100m, memory: 64Mi }
+            limits: { memory: 128Mi }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: cpu-app, namespace: lab12 }
+spec:
+  selector: { app: cpu-app }
+  ports: [{ port: 80 }]
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: { name: cpu-app, namespace: lab12 }
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: cpu-app }
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: { type: Utilization, averageUtilization: 50 }
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60
+      policies: [{ type: Pods, value: 2, periodSeconds: 30 }]

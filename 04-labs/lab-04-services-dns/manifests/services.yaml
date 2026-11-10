@@ -1,0 +1,74 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Namespace
+metadata: { name: lab04 }
+---
+apiVersion: v1
+kind: Namespace
+metadata: { name: lab04-other }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: api, namespace: lab04 }
+spec:
+  replicas: 3
+  selector: { matchLabels: { app: api } }
+  template:
+    metadata: { labels: { app: api } }
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          command: ["sh", "-c", "echo ok > /usr/share/nginx/html/ready; echo \"api from $HOSTNAME\" > /usr/share/nginx/html/index.html; exec nginx -g 'daemon off;'"]
+          ports: [{ name: http, containerPort: 80 }]
+          readinessProbe:
+            httpGet: { path: /ready, port: http }
+            periodSeconds: 2
+          resources:
+            requests: { cpu: 20m, memory: 32Mi }
+            limits: { memory: 64Mi }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: api, namespace: lab04 }
+spec:
+  selector: { app: api }
+  ports: [{ name: http, port: 80, targetPort: http }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: api-headless, namespace: lab04 }
+spec:
+  clusterIP: None
+  selector: { app: api }
+  ports: [{ name: http, port: 80, targetPort: http }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: db, namespace: lab04 }
+spec:
+  type: ExternalName
+  externalName: example.com
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: other, namespace: lab04-other }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: other } }
+  template:
+    metadata: { labels: { app: other } }
+    spec:
+      containers:
+        - name: hello
+          image: nginxdemos/hello:plain-text
+          ports: [{ containerPort: 80 }]
+          resources:
+            requests: { cpu: 20m, memory: 32Mi }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: other, namespace: lab04-other }
+spec:
+  selector: { app: other }
+  ports: [{ port: 80, targetPort: 80 }]

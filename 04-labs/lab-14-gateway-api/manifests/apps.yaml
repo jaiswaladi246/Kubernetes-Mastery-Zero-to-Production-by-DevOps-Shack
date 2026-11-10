@@ -1,0 +1,48 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: shop-v1, namespace: lab14 }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: shop, version: v1 } }
+  template:
+    metadata: { labels: { app: shop, version: v1 } }
+    spec:
+      containers:
+        - name: app
+          image: hashicorp/http-echo:1.0
+          args: ["-text=shop v1 (stable)", "-listen=:5678"]
+          ports: [{ containerPort: 5678 }]
+          resources:
+            requests: { cpu: 10m, memory: 16Mi }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: shop-v1, namespace: lab14 }
+spec:
+  selector: { app: shop, version: v1 }
+  ports: [{ port: 80, targetPort: 5678 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: shop-v2, namespace: lab14 }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: shop, version: v2 } }
+  template:
+    metadata: { labels: { app: shop, version: v2 } }
+    spec:
+      containers:
+        - name: app
+          image: hashicorp/http-echo:1.0
+          args: ["-text=shop v2 (canary)", "-listen=:5678"]
+          ports: [{ containerPort: 5678 }]
+          resources:
+            requests: { cpu: 10m, memory: 16Mi }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: shop-v2, namespace: lab14 }
+spec:
+  selector: { app: shop, version: v2 }
+  ports: [{ port: 80, targetPort: 5678 }]

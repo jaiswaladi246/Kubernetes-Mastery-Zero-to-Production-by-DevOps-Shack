@@ -1,0 +1,11 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata: { name: shop, namespace: lab14 }
+spec:
+  parentRefs: [{ name: public }]
+  hostnames: ["shop.local"]
+  rules:
+    - backendRefs:
+        - { name: shop-v1, port: 80, weight: 90 }
+        - { name: shop-v2, port: 80, weight: 10 }

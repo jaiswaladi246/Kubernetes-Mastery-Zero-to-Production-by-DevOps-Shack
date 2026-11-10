@@ -1,0 +1,33 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: graceful, namespace: lab10 }
+spec:
+  replicas: 3
+  strategy:
+    rollingUpdate: { maxSurge: 1, maxUnavailable: 0 }
+  selector: { matchLabels: { app: graceful } }
+  template:
+    metadata: { labels: { app: graceful } }
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: web
+          image: nginx:1.27
+          ports: [{ containerPort: 80 }]
+          readinessProbe:
+            httpGet: { path: /, port: 80 }
+            periodSeconds: 2
+          # lifecycle:
+          #   preStop:
+          #     sleep:
+          #       seconds: 8
+          resources:
+            requests: { cpu: 20m, memory: 32Mi }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: graceful, namespace: lab10 }
+spec:
+  selector: { app: graceful }
+  ports: [{ port: 80 }]

@@ -1,0 +1,4 @@
+Kubernetes Mastery: Zero to Production · by DevOps Shack (https://devopsshack.com)
+Release {{ .Release.Name }} installed. Try:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "web.fullname" . }} 8080:{{ .Values.service.port }}
+  curl localhost:8080

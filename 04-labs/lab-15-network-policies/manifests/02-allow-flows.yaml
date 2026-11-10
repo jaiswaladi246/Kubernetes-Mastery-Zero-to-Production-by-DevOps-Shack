@@ -1,0 +1,33 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: frontend-egress, namespace: lab15 }
+spec:
+  podSelector: { matchLabels: { tier: frontend } }
+  policyTypes: [Egress]
+  egress:
+    - to: [{ podSelector: { matchLabels: { tier: api } } }]
+      ports: [{ protocol: TCP, port: 80 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: api-policy, namespace: lab15 }
+spec:
+  podSelector: { matchLabels: { tier: api } }
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from: [{ podSelector: { matchLabels: { tier: frontend } } }]
+      ports: [{ protocol: TCP, port: 80 }]
+  egress:
+    - to: [{ podSelector: { matchLabels: { tier: db } } }]
+      ports: [{ protocol: TCP, port: 80 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: db-ingress, namespace: lab15 }
+spec:
+  podSelector: { matchLabels: { tier: db } }
+  policyTypes: [Ingress]
+  ingress:
+    - from: [{ podSelector: { matchLabels: { tier: api } } }]
+      ports: [{ protocol: TCP, port: 80 }]

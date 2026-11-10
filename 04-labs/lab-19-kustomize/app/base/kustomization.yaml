@@ -1,0 +1,9 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: [deployment.yaml, service.yaml]
+labels:
+  - pairs: { app.kubernetes.io/part-of: lab19 }
+configMapGenerator:
+  - name: web-config
+    literals: [GREETING=hello]

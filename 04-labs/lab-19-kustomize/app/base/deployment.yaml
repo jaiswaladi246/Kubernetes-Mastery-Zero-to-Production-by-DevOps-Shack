@@ -1,0 +1,18 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: web }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: web } }
+  template:
+    metadata: { labels: { app: web } }
+    spec:
+      containers:
+        - name: web
+          image: hashicorp/http-echo:1.0
+          args: ["-text=$(GREETING)", "-listen=:5678"]
+          envFrom: [{ configMapRef: { name: web-config } }]
+          ports: [{ containerPort: 5678 }]
+          resources:
+            requests: { cpu: 10m, memory: 16Mi }

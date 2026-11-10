@@ -1,0 +1,7 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: default-deny, namespace: lab15 }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]

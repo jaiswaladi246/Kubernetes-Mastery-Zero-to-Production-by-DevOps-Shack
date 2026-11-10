@@ -1,0 +1,53 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Namespace
+metadata: { name: lab16 }
+---
+apiVersion: v1
+kind: Secret
+metadata: { name: db-password, namespace: lab16 }
+stringData: { password: "do-not-leak-me" }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: web, namespace: lab16 }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: web } }
+  template:
+    metadata: { labels: { app: web } }
+    spec:
+      containers:
+        - name: web
+          image: nginx:1.27
+          resources: { requests: { cpu: 10m, memory: 32Mi } }
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: { name: devs-view, namespace: lab16 }
+subjects:
+  - { kind: Group, name: lab16-devs, apiGroup: rbac.authorization.k8s.io }
+roleRef: { kind: ClusterRole, name: view, apiGroup: rbac.authorization.k8s.io }
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: ci-deployer, namespace: lab16 }
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: { name: deployer, namespace: lab16 }
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch", "create"]     # 'create' is the escalation path
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: { name: ci-deployer, namespace: lab16 }
+subjects:
+  - { kind: ServiceAccount, name: ci-deployer, namespace: lab16 }
+roleRef: { kind: Role, name: deployer, apiGroup: rbac.authorization.k8s.io }

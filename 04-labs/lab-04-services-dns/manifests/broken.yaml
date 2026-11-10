@@ -1,0 +1,25 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: shop, namespace: lab04 }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: shop-frontend } }
+  template:
+    metadata: { labels: { app: shop-frontend } }
+    spec:
+      containers:
+        - name: web
+          image: nginxdemos/hello:plain-text
+          ports: [{ containerPort: 80 }]
+          resources:
+            requests: { cpu: 20m, memory: 32Mi }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: shop, namespace: lab04 }
+spec:
+  selector: { app: shop }          # bug 1
+  ports:
+    - port: 80
+      targetPort: 8080             # bug 2

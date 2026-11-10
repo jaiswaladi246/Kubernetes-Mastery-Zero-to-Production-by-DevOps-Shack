@@ -1,0 +1,39 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lab01
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+  namespace: lab01
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: hello }
+  template:
+    metadata:
+      labels: { app: hello }
+    spec:
+      containers:
+        - name: hello
+          image: nginxdemos/hello:plain-text
+          ports: [{ containerPort: 80 }]
+          resources:
+            requests: { cpu: 50m, memory: 32Mi }
+            limits: { memory: 64Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello
+  namespace: lab01
+spec:
+  type: NodePort
+  selector: { app: hello }
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080

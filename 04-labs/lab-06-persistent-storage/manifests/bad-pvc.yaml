@@ -1,0 +1,9 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: fast-data, namespace: lab06 }
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: fast-ssd
+  resources:
+    requests: { storage: 1Gi }

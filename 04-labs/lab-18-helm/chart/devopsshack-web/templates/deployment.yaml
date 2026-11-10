@@ -1,0 +1,28 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "web.fullname" . }}
+  labels: {{- include "web.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "web.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels: {{- include "web.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: web
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          args: ["-text=$(MESSAGE)", "-listen=:5678"]
+          envFrom:
+            - configMapRef: { name: {{ include "web.fullname" . }} }
+          ports: [{ name: http, containerPort: 5678 }]
+          readinessProbe:
+            httpGet: { path: /, port: http }
+          resources: {{- toYaml .Values.resources | nindent 12 }}

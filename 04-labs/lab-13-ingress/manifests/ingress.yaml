@@ -1,0 +1,16 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata: { name: shop, namespace: lab13 }
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: shop.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend: { service: { name: api, port: { number: 80 } } }
+          - path: /
+            pathType: Prefix
+            backend: { service: { name: web, port: { number: 80 } } }

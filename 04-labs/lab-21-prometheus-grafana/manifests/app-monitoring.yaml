@@ -1,0 +1,59 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Namespace
+metadata: { name: lab21 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: podinfo, namespace: lab21 }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: podinfo } }
+  template:
+    metadata: { labels: { app: podinfo } }
+    spec:
+      containers:
+        - name: podinfo
+          image: ghcr.io/stefanprodan/podinfo:6.7.0
+          ports:
+            - { name: http, containerPort: 9898 }
+            - { name: http-metrics, containerPort: 9797 }
+          command: ["./podinfo", "--port=9898", "--port-metrics=9797"]
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: podinfo
+  namespace: lab21
+  labels: { app: podinfo }
+spec:
+  selector: { app: podinfo }
+  ports:
+    - { name: http, port: 9898, targetPort: http }
+    - { name: http-metrics, port: 9797, targetPort: http-metrics }
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata: { name: podinfo, namespace: lab21 }
+spec:
+  selector: { matchLabels: { app: podinfo } }
+  endpoints:
+    - port: http-metrics
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata: { name: podinfo, namespace: lab21 }
+spec:
+  groups:
+    - name: podinfo.rules
+      rules:
+        - alert: PodinfoDown
+          expr: kube_deployment_status_replicas_available{namespace="lab21",deployment="podinfo"} < 1
+          for: 1m
+          labels: { severity: critical }
+          annotations:
+            summary: "podinfo has no available replicas"
+            runbook_url: "https://github.com/jaiswaladi246/Kubernetes-Mastery-Zero-to-Production-by-DevOps-Shack/blob/main/05-troubleshooting-playbooks/README.md"

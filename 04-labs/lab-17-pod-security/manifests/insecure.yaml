@@ -1,0 +1,14 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: insecure, namespace: lab17 }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: insecure } }
+  template:
+    metadata: { labels: { app: insecure } }
+    spec:
+      containers:
+        - name: web
+          image: nginx:1.27
+          resources: { requests: { cpu: 10m, memory: 32Mi } }

@@ -1,0 +1,16 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+replicaCount: 2
+image:
+  repository: hashicorp/http-echo
+  tag: "1.0"
+message: "Hello from Kubernetes Mastery by DevOps Shack"
+service:
+  port: 80
+resources:
+  requests: { cpu: 10m, memory: 16Mi }
+  limits: { memory: 64Mi }
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70

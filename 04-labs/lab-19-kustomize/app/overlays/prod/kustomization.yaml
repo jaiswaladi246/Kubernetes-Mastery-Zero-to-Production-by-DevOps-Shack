@@ -1,0 +1,19 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: lab19-prod
+resources: [../../base, namespace.yaml]
+components: [../../components/pdb]
+replicas:
+  - name: web
+    count: 3
+configMapGenerator:
+  - name: web-config
+    behavior: merge
+    literals: [GREETING=hello from prod]
+patches:
+  - target: { kind: Deployment, name: web }
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 50m

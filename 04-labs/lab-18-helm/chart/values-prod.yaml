@@ -1,0 +1,6 @@
+replicaCount: 4
+message: "Production · Kubernetes Mastery by DevOps Shack"
+autoscaling:
+  enabled: true
+  minReplicas: 4
+  maxReplicas: 12

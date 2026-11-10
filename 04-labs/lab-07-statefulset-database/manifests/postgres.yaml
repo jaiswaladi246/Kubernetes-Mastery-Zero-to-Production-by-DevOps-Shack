@@ -1,0 +1,55 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Namespace
+metadata: { name: lab07 }
+---
+apiVersion: v1
+kind: Secret
+metadata: { name: pg-secret, namespace: lab07 }
+stringData:
+  password: lab07pass
+---
+apiVersion: v1
+kind: Service
+metadata: { name: pg, namespace: lab07 }
+spec:
+  clusterIP: None
+  selector: { app: pg }
+  ports: [{ name: pg, port: 5432 }]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: { name: pg, namespace: lab07 }
+spec:
+  serviceName: pg
+  replicas: 3
+  selector: { matchLabels: { app: pg } }
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate: { partition: 0 }
+  template:
+    metadata: { labels: { app: pg } }
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: postgres
+          image: postgres:17
+          ports: [{ name: pg, containerPort: 5432 }]
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: pg-secret, key: password } }
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          readinessProbe:
+            exec: { command: ["pg_isready", "-U", "postgres"] }
+            periodSeconds: 5
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { memory: 512Mi }
+          volumeMounts: [{ name: data, mountPath: /var/lib/postgresql/data }]
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources: { requests: { storage: 1Gi } }

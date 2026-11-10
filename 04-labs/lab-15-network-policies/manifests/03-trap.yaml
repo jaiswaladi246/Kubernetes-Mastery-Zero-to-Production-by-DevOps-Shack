@@ -1,0 +1,12 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: api-allow-monitoring, namespace: lab15 }
+spec:
+  podSelector: { matchLabels: { tier: api } }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector: { matchLabels: { team: monitoring } }
+        - podSelector: { matchLabels: { app: prometheus } }
+      ports: [{ protocol: TCP, port: 80 }]

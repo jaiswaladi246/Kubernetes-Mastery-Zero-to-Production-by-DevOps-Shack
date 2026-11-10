@@ -1,0 +1,14 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+ports:
+  web:
+    hostPort: 80
+  websecure:
+    hostPort: 443
+service:
+  type: ClusterIP
+nodeSelector:
+  ingress-ready: "true"
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule

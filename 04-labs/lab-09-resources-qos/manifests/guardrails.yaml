@@ -1,0 +1,23 @@
+# Kubernetes Mastery: Zero to Production · by DevOps Shack · https://devopsshack.com · https://www.youtube.com/@devopsshack
+apiVersion: v1
+kind: Namespace
+metadata: { name: lab09-team }
+---
+apiVersion: v1
+kind: LimitRange
+metadata: { name: defaults, namespace: lab09-team }
+spec:
+  limits:
+    - type: Container
+      defaultRequest: { cpu: 100m, memory: 64Mi }
+      default: { cpu: 200m, memory: 128Mi }
+      max: { cpu: "1", memory: 512Mi }
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata: { name: team-quota, namespace: lab09-team }
+spec:
+  hard:
+    requests.cpu: 500m
+    requests.memory: 512Mi
+    pods: "5"
