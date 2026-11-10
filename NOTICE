@@ -1,0 +1,30 @@
+NOTICE
+
+"Kubernetes Mastery: Zero to Production" is an original work created by
+DevOps Shack.
+
+All architecture deep dives, diagrams, learning modules, hands-on labs and
+their manifests and scripts, troubleshooting playbooks, assignments, cheat
+sheets, certification guides and the 1,000 interview questions and answers in
+this repository were written for and are owned by DevOps Shack.
+
+Original source: https://github.com/jaiswaladi246/Kubernetes-Mastery-Zero-to-Production-by-DevOps-Shack
+Website:         https://devopsshack.com
+YouTube:         https://www.youtube.com/@devopsshack
+YouTube (Hindi): https://www.youtube.com/@shackverse
+Instagram:       https://www.instagram.com/devopsshack
+Contact:         office@devopsshack.com
+
+If you found this material anywhere other than an official DevOps Shack
+channel, it was copied from DevOps Shack. Please learn from the original and
+support the creators.
+
+Any redistribution or adaptation must keep this NOTICE file, the LICENSE file
+and the DevOps Shack credits (headers, footers and file banners) in every
+file, as required by the LICENSE.
+
+Kubernetes® is a registered trademark of The Linux Foundation. This project is
+an independent educational resource and is not affiliated with or endorsed by
+The Linux Foundation or the CNCF.
+
+Made with love by DevOps Shack.

@@ -1,0 +1,13 @@
+# Kubernetes Mastery by DevOps Shack: blocks changes that strip credits
+name: branding-check
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  branding:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify DevOps Shack credits are intact
+        run: bash tools/check-branding.sh

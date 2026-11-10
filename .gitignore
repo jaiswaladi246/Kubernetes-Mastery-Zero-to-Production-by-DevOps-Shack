@@ -1,0 +1,8 @@
+# Kubernetes Mastery by DevOps Shack
+.DS_Store
+*.swp
+kubeconfig*
+*.kubeconfig
+.terraform/
+*.tfstate*
+labs-output/
